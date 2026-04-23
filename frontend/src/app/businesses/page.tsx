@@ -26,8 +26,11 @@ export default function BusinessList() {
   const [industryFilter, setIndustryFilter] = useState('');
 
   useEffect(() => {
-    fetchBusinesses(industryFilter).then(setBusinesses).finally(() => setLoading(false));
-  }, [industryFilter]);
+  fetchBusinesses(industryFilter)
+    .then((data) => setBusinesses(data || []))
+    .catch(() => setBusinesses([]))
+    .finally(() => setLoading(false));
+}, [industryFilter]);
 
   const filteredBusinesses = businesses.filter(b => 
     b.name.toLowerCase().includes(search.toLowerCase()) || 

@@ -47,12 +47,13 @@ export default function Dashboard() {
     fetchAnalytics().then(setData).finally(() => setLoading(false));
   }, []);
 
-  if (loading || !data) {
-    return (
-      <div className="flex h-[60vh] items-center justify-center">
-        <div className="h-12 w-12 animate-spin rounded-full border-4 border-primary border-t-transparent"></div>
-      </div>
-    );
+  if (loading) {
+    return <div className="text-center mt-20">Loading...</div>;
+  }
+
+  // ✅ error state (VERY IMPORTANT)
+  if (!data) {
+    return <div className="text-center mt-20 text-red-500">Failed to load data ❌</div>;
   }
 
   const stats = [

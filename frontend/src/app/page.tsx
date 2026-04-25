@@ -57,10 +57,10 @@ export default function Dashboard() {
   }
 
   const stats = [
-    { name: 'Total Businesses', value: data.summary.total_businesses.toLocaleString(), icon: Users, color: 'text-blue-500', bg: 'bg-blue-50' },
-    { name: 'Anomalies Detected', value: data.summary.total_anomalies, icon: AlertCircle, color: 'text-rose-500', bg: 'bg-rose-50' },
-    { name: 'Anomaly Rate', value: `${data.summary.anomaly_rate}%`, icon: TrendingUp, color: 'text-amber-500', bg: 'bg-amber-50' },
-    { name: 'Avg Risk Score', value: Math.round(data.summary.avg_risk), icon: IndianRupee, color: 'text-emerald-500', bg: 'bg-emerald-50' },
+    { name: 'Total Businesses', value: data.summary.total_businesses.toLocaleString(), icon: Users, color: 'text-purple-500', bg: 'bg-purple-500/10' },
+    { name: 'Anomalies Detected', value: data.summary.total_anomalies, icon: AlertCircle, color: 'text-fuchsia-500', bg: 'bg-fuchsia-500/10' },
+    { name: 'Anomaly Rate', value: `${data.summary.anomaly_rate}%`, icon: TrendingUp, color: 'text-violet-500', bg: 'bg-violet-500/10' },
+    { name: 'Avg Risk Score', value: Math.round(data.summary.avg_risk), icon: IndianRupee, color: 'text-purple-400', bg: 'bg-purple-400/10' },
   ];
 
   return (

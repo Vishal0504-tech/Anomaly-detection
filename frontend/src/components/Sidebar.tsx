@@ -95,7 +95,7 @@ export default function Sidebar() {
       </button>
 
       {/* Desktop Sidebar */}
-      <aside className="hidden h-full w-64 flex-col border-r bg-card text-card-foreground md:flex">
+      <aside className="hidden h-full w-64 flex-col border-r bg-card/80 backdrop-blur-xl text-card-foreground md:flex">
         <SidebarContent pathname={pathname} setIsOpen={setIsOpen} />
       </aside>
 

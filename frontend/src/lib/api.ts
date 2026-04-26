@@ -1,7 +1,7 @@
 // ✅ Use env variable (recommended)
 export const API_BASE_URL =
   process.env.NEXT_PUBLIC_API_BASE_URL ||
-  "http://localhost:8000";
+  "https://anomaly-detection-1-bpb3.onrender.com";
 
 // ---------------- TYPES ----------------
 

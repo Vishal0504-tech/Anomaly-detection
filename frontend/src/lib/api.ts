@@ -1,7 +1,7 @@
 // ✅ Use env variable (recommended)
 export const API_BASE_URL =
   process.env.NEXT_PUBLIC_API_BASE_URL ||
-  "https://anomaly-detection-7bev.onrender.com";
+  "http://localhost:8000";
 
 // ---------------- TYPES ----------------
 
@@ -12,18 +12,23 @@ export interface Business {
   turnover: number;
   electricity_usage: number;
   employee_count: number;
+  freight_cost: number;
+  entity_match_score: number;
   is_anomaly: number;
   risk_score: number;
   explanation: string;
   risk_breakdown?: {
     electricity: number;
     employment: number;
+    logistics: number;
     revenue_consistency: number;
+    entity_matching: number;
   };
   industry_averages?: {
     turnover: number;
     electricity_usage: number;
     employee_count: number;
+    freight_cost: number;
   };
 }
 
@@ -33,6 +38,9 @@ export interface Analytics {
     total_anomalies: number;
     anomaly_rate: number;
     avg_risk: number;
+    highest_risk_industry: string;
+    correlation_factor: number;
+    ai_confidence: number;
   };
   industry_data: Array<{
     industry: string;

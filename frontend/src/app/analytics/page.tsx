@@ -109,18 +109,18 @@ export default function AnalyticsPage() {
         <div className="grid gap-4 md:grid-cols-3">
           <div className="rounded-lg bg-muted/50 p-4">
             <p className="text-xs font-semibold text-muted-foreground uppercase">Highest Risk Sector</p>
-            <p className="mt-1 text-lg font-bold">Manufacturing</p>
-            <p className="text-xs text-muted-foreground">Due to electricity usage inconsistencies.</p>
+            <p className="mt-1 text-lg font-bold">{analytics.summary.highest_risk_industry}</p>
+            <p className="text-xs text-muted-foreground">Due to systemic operational inconsistencies.</p>
           </div>
           <div className="rounded-lg bg-muted/50 p-4">
             <p className="text-xs font-semibold text-muted-foreground uppercase">Correlation Factor</p>
-            <p className="mt-1 text-lg font-bold">0.84</p>
-            <p className="text-xs text-muted-foreground">Strong link between turnover and energy usage.</p>
+            <p className="mt-1 text-lg font-bold">{analytics.summary.correlation_factor}</p>
+            <p className="text-xs text-muted-foreground">Link between turnover and resource usage.</p>
           </div>
           <div className="rounded-lg bg-muted/50 p-4">
             <p className="text-xs font-semibold text-muted-foreground uppercase">AI Confidence</p>
-            <p className="mt-1 text-lg font-bold">92%</p>
-            <p className="text-xs text-muted-foreground">Based on cross-validation of model parameters.</p>
+            <p className="mt-1 text-lg font-bold">{analytics.summary.ai_confidence}%</p>
+            <p className="text-xs text-muted-foreground">Based on model precision metrics.</p>
           </div>
         </div>
       </div>

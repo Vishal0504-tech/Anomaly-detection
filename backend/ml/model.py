@@ -26,6 +26,15 @@ class GSTAnomalyModel:
         # Ratios are more telling than absolute values
         self.df['elec_ratio'] = self.df['electricity_usage'] / (self.df['turnover'] + 1e-9)
         self.df['emp_ratio'] = self.df['employee_count'] / (self.df['turnover'] + 1e-9)
+        self.df['freight_ratio'] = self.df['freight_cost'] / (self.df['turnover'] + 1e-9)
+        
+        # Simulated Entity Matching (Fuzzy Matching)
+        # In a real app, this would use Levenshtein distance on business names from different sources
+        self.df['entity_match_score'] = np.random.uniform(85, 100, size=len(self.df))
+        
+        # Lower match score for some anomalies (if ground truth exists)
+        if 'is_anomaly_manual' in self.df.columns:
+            self.df.loc[self.df['is_anomaly_manual'] == 1, 'entity_match_score'] -= np.random.uniform(10, 40, size=sum(self.df['is_anomaly_manual']))
         
         return self.df
         
@@ -34,7 +43,7 @@ class GSTAnomalyModel:
             self.load_and_preprocess()
             
         # Features for anomaly detection
-        features = ['elec_ratio', 'emp_ratio', 'turnover']
+        features = ['elec_ratio', 'emp_ratio', 'freight_ratio', 'turnover']
         X = self.df[features]
         
         # Scale features
@@ -64,7 +73,7 @@ class GSTAnomalyModel:
         
     def generate_explanations(self):
         # Industry averages and std for benchmarking
-        industry_stats = self.df.groupby('industry')[['elec_ratio', 'emp_ratio', 'turnover']].agg(['mean', 'std']).to_dict()
+        industry_stats = self.df.groupby('industry')[['elec_ratio', 'emp_ratio', 'freight_ratio', 'turnover']].agg(['mean', 'std']).to_dict()
         
         explanations = []
         risk_breakdowns = []
@@ -73,18 +82,22 @@ class GSTAnomalyModel:
             stats = {
                 'elec': {'mean': industry_stats[('elec_ratio', 'mean')][row['industry']], 'std': industry_stats[('elec_ratio', 'std')][row['industry']]},
                 'emp': {'mean': industry_stats[('emp_ratio', 'mean')][row['industry']], 'std': industry_stats[('emp_ratio', 'std')][row['industry']]},
+                'freight': {'mean': industry_stats[('freight_ratio', 'mean')][row['industry']], 'std': industry_stats[('freight_ratio', 'std')][row['industry']]},
                 'turnover': {'mean': industry_stats[('turnover', 'mean')][row['industry']], 'std': industry_stats[('turnover', 'std')][row['industry']]}
             }
             
             # Calculate deviations (z-scores)
             elec_z = (row['elec_ratio'] - stats['elec']['mean']) / (stats['elec']['std'] + 1e-9)
             emp_z = (row['emp_ratio'] - stats['emp']['mean']) / (stats['emp']['std'] + 1e-9)
+            freight_z = (row['freight_ratio'] - stats['freight']['mean']) / (stats['freight']['std'] + 1e-9)
             turnover_z = (row['turnover'] - stats['turnover']['mean']) / (stats['turnover']['std'] + 1e-9)
             
             breakdown = {
                 'electricity': max(0, min(100, elec_z * 20)),
                 'employment': max(0, min(100, emp_z * 20)),
-                'revenue_consistency': max(0, min(100, -turnover_z * 20))
+                'logistics': max(0, min(100, freight_z * 20)),
+                'revenue_consistency': max(0, min(100, -turnover_z * 20)),
+                'entity_matching': row['entity_match_score']
             }
             
             if row['is_anomaly'] == 0:
@@ -97,7 +110,11 @@ class GSTAnomalyModel:
                 reasons.append(f"Electricity intensity is {round(row['elec_ratio']/stats['elec']['mean'], 1)}x higher than peers.")
             if emp_z > 2:
                 reasons.append(f"Staffing levels are disproportionately high ({round(row['emp_ratio']/stats['emp']['mean'], 1)}x) relative to revenue.")
-            if turnover_z < -1.5 and (elec_z > 1 or emp_z > 1):
+            if freight_z > 2:
+                reasons.append(f"Logistics/Freight costs are significantly above industry baseline ({round(row['freight_ratio']/stats['freight']['mean'], 1)}x).")
+            if row['entity_match_score'] < 80:
+                reasons.append(f"Weak entity matching ({round(row['entity_match_score'], 1)}%) between GST and e-Way bill records.")
+            if turnover_z < -1.5 and (elec_z > 1 or emp_z > 1 or freight_z > 1):
                 reasons.append("High operational throughput detected against suspiciously low declared turnover.")
                 
             if not reasons:

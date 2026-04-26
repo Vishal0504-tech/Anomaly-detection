@@ -10,7 +10,8 @@ import {
   BarChart3, 
   ShieldAlert,
   Menu,
-  X
+  X,
+  Database
 } from 'lucide-react';
 import { clsx, type ClassValue } from 'clsx';
 import { twMerge } from 'tailwind-merge';
@@ -25,6 +26,7 @@ const navItems = [
   { name: 'Business List', href: '/businesses', icon: Search },
   { name: 'Alerts', href: '/alerts', icon: AlertTriangle },
   { name: 'Analytics', href: '/analytics', icon: BarChart3 },
+  { name: 'Data Center', href: '/upload', icon: Database },
 ];
 
 

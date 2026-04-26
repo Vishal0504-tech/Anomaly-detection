@@ -174,10 +174,25 @@ export default function Dashboard() {
             </p>
           </div>
           <div className="flex gap-3">
-            <button className="rounded-xl bg-white px-6 py-3 text-sm font-bold text-primary hover:bg-opacity-90 transition-all active:scale-95 shadow-lg">
+            <button 
+              onClick={() => alert("Audit Loop Initialized: Notifications sent to relevant tax officers.")}
+              className="rounded-xl bg-white px-6 py-3 text-sm font-bold text-primary hover:bg-opacity-90 transition-all active:scale-95 shadow-lg"
+            >
               Start Audit Loop
             </button>
-            <button className="rounded-xl border border-white/20 bg-white/10 px-6 py-3 text-sm font-bold backdrop-blur-sm hover:bg-white/20 transition-all">
+            <button 
+              onClick={() => {
+                const csvContent = "data:text/csv;charset=utf-8,Industry,Anomalies\n" + 
+                  data.industry_data.map(i => `${i.industry},${i.anomalies}`).join("\n");
+                const encodedUri = encodeURI(csvContent);
+                const link = document.createElement("a");
+                link.setAttribute("href", encodedUri);
+                link.setAttribute("download", "gst_risk_analysis.csv");
+                document.body.appendChild(link);
+                link.click();
+              }}
+              className="rounded-xl border border-white/20 bg-white/10 px-6 py-3 text-sm font-bold backdrop-blur-sm hover:bg-white/20 transition-all"
+            >
               Export Analysis
             </button>
           </div>

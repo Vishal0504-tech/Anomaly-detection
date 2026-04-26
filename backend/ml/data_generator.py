@@ -30,19 +30,28 @@ def generate_synthetic_data(num_records=1200):
         if industry == 'Manufacturing':
             elec_mult = random.uniform(80, 150)
             emp_mult = random.uniform(0.1, 0.3)
+            freight_mult = random.uniform(5, 12)
         elif industry == 'Services':
             elec_mult = random.uniform(10, 30)
             emp_mult = random.uniform(0.5, 1.2)
+            freight_mult = random.uniform(0.5, 2)
+        elif industry == 'Logistics':
+            elec_mult = random.uniform(40, 80)
+            emp_mult = random.uniform(0.3, 0.7)
+            freight_mult = random.uniform(15, 30)
         else:
             elec_mult = random.uniform(30, 70)
             emp_mult = random.uniform(0.2, 0.5)
+            freight_mult = random.uniform(2, 6)
             
         electricity = round(turnover * elec_mult + random.uniform(-10, 10), 2)
         employees = int(turnover * emp_mult + random.randint(1, 5))
+        freight = round(turnover * freight_mult + random.uniform(-5, 5), 2)
         
         # Ensure non-negative
         electricity = max(5, electricity)
         employees = max(1, employees)
+        freight = max(0, freight)
         
         data.append({
             'business_id': business_id,
@@ -51,6 +60,7 @@ def generate_synthetic_data(num_records=1200):
             'turnover': turnover,
             'electricity_usage': electricity,
             'employee_count': employees,
+            'freight_cost': freight,
             'is_anomaly_manual': 0 # To track ground truth if needed
         })
     
@@ -61,7 +71,7 @@ def generate_synthetic_data(num_records=1200):
     anomaly_indices = random.sample(range(num_records), num_anomalies)
     
     for idx in anomaly_indices:
-        anomaly_type = random.choice(['high_elec', 'high_emp', 'low_turnover_ghost'])
+        anomaly_type = random.choice(['high_elec', 'high_emp', 'low_turnover_ghost', 'high_freight'])
         
         if anomaly_type == 'high_elec':
             # 5x expected electricity
@@ -69,6 +79,9 @@ def generate_synthetic_data(num_records=1200):
         elif anomaly_type == 'high_emp':
             # 4x expected employees
             df.at[idx, 'employee_count'] *= random.randint(3, 6)
+        elif anomaly_type == 'high_freight':
+            # 5x expected freight
+            df.at[idx, 'freight_cost'] *= random.uniform(4, 7)
         elif anomaly_type == 'low_turnover_ghost':
             # High operations but suspiciously low turnover
             df.at[idx, 'turnover'] /= random.uniform(5, 10)

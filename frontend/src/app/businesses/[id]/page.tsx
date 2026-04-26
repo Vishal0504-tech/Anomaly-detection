@@ -10,7 +10,9 @@ import {
   Zap, 
   Users,
   Info,
-  ShieldAlert
+  ShieldAlert,
+  Truck,
+  Activity
 } from 'lucide-react';
 import { 
   BarChart, 
@@ -48,9 +50,10 @@ export default function BusinessDetail({ params }: { params: Promise<{ id: strin
   }
 
   const radarData = [
-    { subject: 'Electricity', A: business.electricity_usage / (business.industry_averages?.electricity_usage || 1) * 100, fullMark: 150 },
-    { subject: 'Employees', A: business.employee_count / (business.industry_averages?.employee_count || 1) * 100, fullMark: 150 },
-    { subject: 'Turnover', A: business.turnover / (business.industry_averages?.turnover || 1) * 100, fullMark: 150 },
+    { subject: 'Electricity', A: business.electricity_usage / (business.industry_averages?.electricity_usage || 1) * 100 },
+    { subject: 'Employees', A: business.employee_count / (business.industry_averages?.employee_count || 1) * 100 },
+    { subject: 'Turnover', A: business.turnover / (business.industry_averages?.turnover || 1) * 100 },
+    { subject: 'Logistics', A: business.freight_cost / (business.industry_averages?.freight_cost || 1) * 100 },
   ];
 
   const containerVariants = {
@@ -197,10 +200,11 @@ export default function BusinessDetail({ params }: { params: Promise<{ id: strin
         {/* Right: Actual Numbers */}
         <motion.div variants={itemVariants} className="glass-card rounded-xl p-6 lg:col-span-1">
           <h3 className="mb-6 text-sm font-semibold text-muted-foreground uppercase tracking-wider">Raw Evidence</h3>
-          <div className="space-y-6">
+          <div className="space-y-4">
             {[
               { label: 'Revenue', value: business.turnover, icon: IndianRupee, unit: 'L' },
               { label: 'Electricity', value: business.electricity_usage, icon: Zap, unit: 'kWh' },
+              { label: 'Logistics', value: business.freight_cost, icon: Truck, unit: '₹' },
               { label: 'Employees', value: business.employee_count, icon: Users, unit: '' }
             ].map((item) => (
               <div key={item.label} className="flex items-center justify-between p-3 rounded-lg bg-muted/30">

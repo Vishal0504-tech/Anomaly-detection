@@ -64,6 +64,37 @@ export default function UploadPage() {
     }
   };
 
+  const handleReset = async () => {
+    setUploading(true);
+    setError(null);
+    setResult(null);
+
+    try {
+      const response = await fetch(`${API_BASE_URL}/reset-data`, {
+        method: 'POST',
+      });
+
+      const data = await response.json();
+
+      if (response.ok) {
+        setResult({
+          message: 'Demo Data Restored',
+          summary: {
+            total_businesses: 1200,
+            total_anomalies: '??' // Frontend will refresh from API
+          }
+        });
+        window.location.reload(); // Refresh to show new data
+      } else {
+        setError(data.detail || 'Reset failed');
+      }
+    } catch (err) {
+      setError('Could not connect to the server.');
+    } finally {
+      setUploading(false);
+    }
+  };
+
   return (
     <div className="max-w-4xl mx-auto space-y-8 animate-in">
       <div className="flex items-center gap-4">
@@ -211,6 +242,23 @@ export default function UploadPage() {
                 <span className="text-xs font-bold">~0.4s / 1k records</span>
               </div>
             </div>
+          </div>
+
+          <div className="glass-card rounded-3xl p-6 border-amber-500/20 bg-amber-500/5">
+            <h4 className="text-sm font-bold text-amber-700 uppercase tracking-widest mb-3 flex items-center gap-2">
+              <AlertCircle className="h-4 w-4" />
+              Reset System
+            </h4>
+            <p className="text-xs text-amber-800/70 mb-4 leading-relaxed">
+              Want to go back to the original synthetic demo data? This will clear any uploaded files and restore the generated 1,200 records.
+            </p>
+            <button 
+              onClick={handleReset}
+              disabled={uploading}
+              className="w-full py-3 rounded-xl border border-amber-200 bg-white text-amber-700 text-sm font-bold hover:bg-amber-100 transition-all active:scale-95 disabled:opacity-50"
+            >
+              Reset to Demo Mode
+            </button>
           </div>
         </div>
       </div>

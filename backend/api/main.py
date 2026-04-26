@@ -169,6 +169,25 @@ async def upload_data(file: UploadFile = File(...)):
         print(f"Upload error: {str(e)}")
         raise HTTPException(status_code=500, detail=f"Failed to process dataset: {str(e)}")
 
+@app.post("/reset-data")
+async def reset_data():
+    global processed_df
+    base_dir = os.path.dirname(os.path.dirname(os.path.abspath(__file__)))
+    data_path = os.path.join(base_dir, "data", "business_data.csv")
+    
+    try:
+        # Generate new synthetic data
+        df = generate_synthetic_data()
+        df.to_csv(data_path, index=False)
+        
+        # Re-train model
+        model = GSTAnomalyModel(data_path)
+        processed_df = model.train()
+        
+        return {"status": "success", "message": "Demo data restored and model retrained"}
+    except Exception as e:
+        raise HTTPException(status_code=500, detail=str(e))
+
 if __name__ == "__main__":
     import uvicorn
     uvicorn.run(app, host="0.0.0.0", port=8000)
